@@ -133,6 +133,33 @@ app.layout = html.Div(
             )
         ]),
 
+        # Tabs for Analysis
+        dcc.Tabs([
+            dcc.Tab(label="Price Analysis", children=[
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='price-histogram', style={'padding': '20px'})),
+                    dbc.Col(dcc.Graph(id='ratings-scatter', style={'padding': '20px'})),
+                ])
+            ]),
+            dcc.Tab(label="Food & Alcohol Analysis", children=[
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='food-pairings-bar', style={'padding': '20px'})),
+                    dbc.Col(dcc.Graph(id='alcohol-boxplot', style={'padding': '20px'})),
+                ])
+            ]),
+            dcc.Tab(label="Wine Styles", children=[
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='wine-style-pie', style={'padding': '20px'})),
+                ])
+            ]),
+            dcc.Tab(label="NLP Analysis", children=[
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='nlp-bar-chart', figure=nlp_bar_fig, style={'padding': '20px'})),
+                ])
+            ])
+        ]),
+
+
         html.Footer(
             "Dashboard by Team Name",
             style={
@@ -160,7 +187,17 @@ app.layout = html.Div(
     }
 ),
 
-
+# Callback for Filter Panel Toggle
+@app.callback(
+    Output("filter-panel", "style"),
+    Input("filter-toggle", "n_clicks"),
+    prevent_initial_call=True
+)
+def toggle_filters(n_clicks):
+    if n_clicks % 2 == 0:
+        return {"display": "block", "border": "1px solid #ccc", "padding": "10px", "borderRadius": "5px"}
+    else:
+        return {"display": "none"}
 
 
 
