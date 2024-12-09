@@ -199,8 +199,39 @@ def toggle_filters(n_clicks):
     else:
         return {"display": "none"}
 
+# Callback for Chart Updates
+@app.callback(
+    [Output('price-histogram', 'figure'),
+     Output('ratings-scatter', 'figure'),
+     Output('food-pairings-bar', 'figure'),
+     Output('alcohol-boxplot', 'figure'),
+     Output('wine-style-pie', 'figure')],
+    [Input('country-dropdown', 'value'),
+     Input('wine-style-dropdown', 'value'),
+     Input('price-slider', 'value')]
+)
+def update_charts(selected_countries, selected_styles, price_range):
+    filtered_df = wine_df[
+        (wine_df['Price'] >= price_range[0]) & (wine_df['Price'] <= price_range[1])
+    ]
+    if selected_countries:
+        filtered_df = filtered_df[filtered_df['Country'].isin(selected_countries)]
+    if selected_styles:
+        filtered_df = filtered_df[filtered_df['Wine style'].isin(selected_styles)]
 
+# Price Distribution Chart
+    hist_fig = px.histogram(
+        filtered_df, x='Price', color='Country',
+        title="Price Distribution by Country",
+        nbins=30, color_discrete_sequence=px.colors.sequential.Agsunset
+    )
 
+    # Ratings vs Price Scatter Plot
+    scatter_fig = px.scatter_3d(
+        filtered_df, x='Price', y='Rating', z='Number of Ratings',
+        color='Country', title="Ratings vs Price",
+        hover_name='Name'
+    )
 # Run the app
 if __name__ == '__main__':
     app.run_server(debug=True)
