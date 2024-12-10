@@ -44,8 +44,8 @@ app.layout = html.Div(
         html.Div(
             children=[
                 html.Img(
-                    src="assets/rb_118902.png",
-                    style={"height": "100px", "width" : "100px", "marginBottom": "30px"} 
+                    src="assets\logo New.png",
+                    style={"height": "150px", "width" : "150px", "marginBottom": "30px"} 
                 ),
                 html.Div(
                     children=[
@@ -58,7 +58,7 @@ app.layout = html.Div(
                             }
                         ),
                         html.P(
-                            "Explore insights and visualizations on wine analytics.",
+                            "FROM GRAPES TO GLASS: A WINE DATA EXPLORATION",
                             style={
                                 'color': '#ffffff',
                                 'margin': '0'
@@ -160,23 +160,25 @@ app.layout = html.Div(
         ]),
 
 
+        # Footer Section
         html.Footer(
-            "Dashboard by Team Name",
+            "Dashboard by GROUP 10",
             style={
                 "display": "flex",
                 "alignItems": "center",
-                "textColor": "#ffffff",
+                "color": "#ffffff",
                 "flexDirection": "column",
                 "justifyContent": "center",
                 "width": "96.5vw",
-                "padding": "20px 20px 20px 20px",
-                'textAlign': 'center',
-                'marginTop': '100vh',
+                "padding": "20px",
+                "textAlign": "center",
+                "marginTop": "auto",
                 "marginLeft": "30px",
                 "marginRight": "30px",
                 "borderRadius": "10px",
-                'backgroundColor': '#00072D'}
-        )
+                "backgroundColor": "#00072D",
+            },
+        ),
 
     ],
     style={
@@ -195,7 +197,7 @@ app.layout = html.Div(
 )
 def toggle_filters(n_clicks):
     if n_clicks % 2 == 0:
-        return {"display": "block", "border": "1px solid #ccc", "padding": "10px", "borderRadius": "5px"}
+        return {'background': 'linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%)',"display": "block", "border": "1px solid #ccc", "padding": "10px", "borderRadius": "5px", "margin": "10px 30px 20px 30px"}
     else:
         return {"display": "none"}
 
@@ -211,14 +213,24 @@ def toggle_filters(n_clicks):
      Input('price-slider', 'value')]
 )
 def update_charts(selected_countries, selected_styles, price_range):
+    # Ensure default values if inputs are None or empty
+    if selected_countries is None:
+        selected_countries = []
+    if selected_styles is None:
+        selected_styles = []
+    if price_range is None:
+        price_range = [wine_df['Price'].min(), wine_df['Price'].max()]
+    
+    # Filter the data based on the selected inputs
     filtered_df = wine_df[
         (wine_df['Price'] >= price_range[0]) & (wine_df['Price'] <= price_range[1])
     ]
+    
     if selected_countries:
         filtered_df = filtered_df[filtered_df['Country'].isin(selected_countries)]
     if selected_styles:
         filtered_df = filtered_df[filtered_df['Wine style'].isin(selected_styles)]
-
+    
     # Price Distribution Chart
     hist_fig = px.histogram(
         filtered_df, x='Price', color='Country',
@@ -232,6 +244,7 @@ def update_charts(selected_countries, selected_styles, price_range):
         color='Country', title="Ratings vs Price",
         hover_name='Name'
     )
+
     # Popular Food Pairings Bar Chart
     food_counts = filtered_df['Food pairings'].explode().value_counts()
     bar_fig = px.bar(
@@ -239,11 +252,13 @@ def update_charts(selected_countries, selected_styles, price_range):
         title="Popular Food Pairings", labels={'x': 'Food', 'y': 'Count'},
         text_auto=True, color=food_counts.values, color_continuous_scale='Viridis'
     )
+
     # Alcohol Content Box Plot
     box_fig = px.box(
         filtered_df, x='Country', y='Alcohol content', color='Country',
         title="Alcohol Content by Country", color_discrete_sequence=px.colors.qualitative.Safe
     )
+
     # Wine Style Pie Chart
     pie_fig = px.pie(
         filtered_df, names='Wine style', title="Wine Style Distribution",
@@ -251,6 +266,7 @@ def update_charts(selected_countries, selected_styles, price_range):
     )
 
     return hist_fig, scatter_fig, bar_fig, box_fig, pie_fig
+
 
 # Run the app
 if __name__ == '__main__':
