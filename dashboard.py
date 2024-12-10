@@ -219,7 +219,7 @@ def update_charts(selected_countries, selected_styles, price_range):
     if selected_styles:
         filtered_df = filtered_df[filtered_df['Wine style'].isin(selected_styles)]
 
-# Price Distribution Chart
+    # Price Distribution Chart
     hist_fig = px.histogram(
         filtered_df, x='Price', color='Country',
         title="Price Distribution by Country",
@@ -231,6 +231,18 @@ def update_charts(selected_countries, selected_styles, price_range):
         filtered_df, x='Price', y='Rating', z='Number of Ratings',
         color='Country', title="Ratings vs Price",
         hover_name='Name'
+    )
+    # Popular Food Pairings Bar Chart
+    food_counts = filtered_df['Food pairings'].explode().value_counts()
+    bar_fig = px.bar(
+        food_counts, x=food_counts.index, y=food_counts.values,
+        title="Popular Food Pairings", labels={'x': 'Food', 'y': 'Count'},
+        text_auto=True, color=food_counts.values, color_continuous_scale='Viridis'
+    )
+    # Alcohol Content Box Plot
+    box_fig = px.box(
+        filtered_df, x='Country', y='Alcohol content', color='Country',
+        title="Alcohol Content by Country", color_discrete_sequence=px.colors.qualitative.Safe
     )
 # Run the app
 if __name__ == '__main__':
