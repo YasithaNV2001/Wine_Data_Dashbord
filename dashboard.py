@@ -244,6 +244,14 @@ def update_charts(selected_countries, selected_styles, price_range):
         filtered_df, x='Country', y='Alcohol content', color='Country',
         title="Alcohol Content by Country", color_discrete_sequence=px.colors.qualitative.Safe
     )
+    # Wine Style Pie Chart
+    pie_fig = px.pie(
+        filtered_df, names='Wine style', title="Wine Style Distribution",
+        color_discrete_sequence=px.colors.sequential.RdBu
+    )
+
+    return hist_fig, scatter_fig, bar_fig, box_fig, pie_fig
+
 # Run the app
 if __name__ == '__main__':
     app.run_server(debug=True)
